@@ -1,8 +1,7 @@
 
-function renderBooks(filter = 'LOW_TO_HIGH') {
+function renderBooks(filter) {
 
     const books = getBooks();
-    console.log(getBooks())
     const booksWrapper = document.querySelector(".books");
 
     if(filter === 'LOW_TO_HIGH') {
@@ -19,7 +18,6 @@ function renderBooks(filter = 'LOW_TO_HIGH') {
 
     const booksHtml = books
         .map((book) => {
-            console.log(book)
             return `<div class="book">
             <figure class="book__img--wrapper">
                 <img class="book__img" src="${book.url}" alt="">
@@ -28,7 +26,7 @@ function renderBooks(filter = 'LOW_TO_HIGH') {
                 ${book.title}
             </div>
             <div class="book__ratings">
-                ${ratingsHtml(book.rating)}
+                ${ratingsHTML(book.rating)}
             </div>
             <div class="book__price">
                 <span>$${book.originalPrice.toFixed(2)}</span>
@@ -41,21 +39,19 @@ function renderBooks(filter = 'LOW_TO_HIGH') {
 }
 
 
-function ratingHTML(rating) {
+function ratingsHTML(rating) {
     let ratingHTML = "";
     for (i = 0; i < Math.floor(rating); ++i) {
-        ratingHtml += '<i class="fas fa-star"></i>'
+        ratingHTML += '<i class="fas fa-star"></i>\n';
     }
-
     if (!Number.isInteger(rating)) {
-        ratingHTML += '<i class="fas fa-star-half-alt"></i>'
+        ratingHTML += '<i class="fas fa-star-half-alt"></i>\n';
     }
-    return ratingHTML()
+    return ratingHTML;
 }
 
 
 function filterBooks(event) {
-    console.log("filterBooks function called")
     const selectedFilter = event.target.value;
 
     renderBooks(selectedFilter);
