@@ -1,15 +1,23 @@
+let books;
 
-function renderBooks(filter) {
-
-    const books = getBooks();
+async function renderBooks(filter) {
     const booksWrapper = document.querySelector(".books");
+
+    booksWrapper.classList += ' books__loading'
+    
+
+    if (!books) {
+      books = await getBooks();
+    }
+
+    booksWrapper.classList.remove('books__loading')
 
     if(filter === 'LOW_TO_HIGH') {
 
-        books.sort((a, b) => a.originalPrice - b.originalPrice);
+        books.sort((a, b) => (a.salePrice || a.originalPrice) - (b.salePrice || b.originalPrice));
     }
     else if (filter === 'HIGH_TO_LOW') {
-        books.sort((a, b) => b.originalPrice - a.originalPrice);
+        books.sort((a, b) => (b.salePrice || b.originalPrice) - (a.salePrice || a.originalPrice));
     }
     else if (filter === 'RATING') {
         books.sort((a, b) => b.rating - a.rating);
@@ -29,13 +37,21 @@ function renderBooks(filter) {
                 ${ratingsHTML(book.rating)}
             </div>
             <div class="book__price">
-                <span>$${book.originalPrice.toFixed(2)}</span>
+                ${priceHTML(book.originalPrice, book.salePrice)}
             </div>
         </div>`;
         })
         .join("");
 
     booksWrapper.innerHTML = booksHtml;
+}
+
+
+function priceHTML(originalPrice, salePrice) {
+    if (!salePrice) {
+        return `${originalPrice.toFixed(2)}`
+    }
+    return `<span class="book__price--normal">$${originalPrice.toFixed(2)}</span>$${salePrice.toFixed(2)}`
 }
 
 
@@ -62,12 +78,12 @@ setTimeout(() => {
 }, 0);
 
 
-
-
-// FAKE DATA
+// DATA
 
 function getBooks() {
-  return [
+  return new Promise((resolve) => {
+    setTimeout(() => {
+      resolve([
         {
           id: 1,
           title: "To Kill A Mockingbird",
@@ -81,7 +97,7 @@ function getBooks() {
           title: "Where The Wild Things Are",
           url: "assets/book_cover_2.jpg",
           originalPrice: 20.99,
-          salePrice: 13.95,
+          salePrice: null,
           rating: 5,
         },
         {
@@ -97,7 +113,7 @@ function getBooks() {
           title: "A Wrinkle In Time",
           url: "assets/book_cover_4.jpg",
           originalPrice: 22.99,
-          salePrice: 12.95,
+          salePrice: null,
           rating: 4.5,
         },
         {
@@ -145,7 +161,7 @@ function getBooks() {
           title: "Nobody's Girl",
           url: "assets/book_cover_10.jpg",
           originalPrice: 44.99,
-          salePrice: 24.95,
+          salePrice: null,
           rating: 4.5,
         },
         {
@@ -163,6 +179,8 @@ function getBooks() {
           originalPrice: 32.99,
           salePrice: 16.95,
           rating: 4.5,
-        }
-      ]
+        },
+      ]);
+    }, 1000);
+  });
 }
